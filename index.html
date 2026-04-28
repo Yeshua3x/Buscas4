@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sistema de Busca com JSON externo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #searchInput {
+      width: calc(100% - 80px);
+      padding: 10px;
+      font-size: 16px;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    #searchButton {
+      padding: 10px 16px;
+      font-size: 16px;
+    }
+    .result {
+      border-bottom: 1px solid #ccc;
+      padding: 8px 0;
+    }
+    .highlight {
+      background-color: #ffec99;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sistema de Busca com JSON externo</h1>
+
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Digite uma palavra‑chave..."
+  />
+  <button id="searchButton">Buscar</button>
+
+  <div id="results"></div>
+
+  <script>
+    // URL do JSON externo (pode ser local ou remoto)
+    const URL_JSON = "./dados.json";
+
+    // Variável para armazenar os dados carregados
+    let dados = [];
+
+    // Carrega o JSON externo
+    fetch(URL_JSON)
+      .then((response) => {
+        if (!response.ok) throw new Error("Erro ao carregar JSON.");
+        return response.json();
+      })
+      .then((json) => {
+        dados = Array.isArray(json) ? json : [];
+      })
+      .catch((error) => {
+        console.error("Erro ao carregar JSON:", error);
+        document.getElementById("results").innerHTML =
+          "<p>Erro ao carregar os dados.</p>";
+      });
+
+    // Elementos do DOM
+    const searchInput = document.getElementById("searchInput");
+    const searchButton = document.getElementById("searchButton");
+    const results = document.getElementById("results");
+
+    // Função de busca (case insensitive)
+    function buscar(termos) {
+      if (!termos || !dados.length) {
+        results.innerHTML = "";
+        return;
+      }
+
+      const termosMin = termos.toLowerCase();
+
+      const resultadosFiltrados = dados.filter((item) => {
+        const titulo = (item.titulo || "").toLowerCase();
+        const descricao = (item.descricao || "").toLowerCase();
+        return titulo.includes(termosMin) || descricao.includes(termosMin);
+      });
+
+      // Monta a lista de resultados
+      results.innerHTML = "";
+      if (resultadosFiltrados.length === 0) {
+        results.innerHTML = "<p>Nenhum resultado encontrado.</p>";
+      } else {
+        resultadosFiltrados.forEach((item) => {
+          const tit = (item.titulo || "").replace(
+            new RegExp(termos, "gi"),
+            (match) => `<span class="highlight">${match}</span>`
+          );
+          const desc = (item.descricao || "").replace(
+            new RegExp(termos, "gi"),
+            (match) => `<span class="highlight">${match}</span>`
+          );
+
+          const div = document.createElement("div");
+          div.className = "result";
+          div.innerHTML = `<b>${tit}</b><br><small>${desc}</small>`;
+          results.appendChild(div);
+        });
+      }
+    }
+
+    // Buscar ao digitar
+    searchInput.addEventListener("input", (e) => {
+      buscar(e.target.value.trim());
+    });
+
+    // Buscar ao clicar no botão
+    searchButton.addEventListener("click", () => {
+      buscar(searchInput.value.trim());
+    });
+  </script>
+</body>
+</html>
