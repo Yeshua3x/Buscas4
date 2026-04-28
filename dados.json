@@ -1,0 +1,14 @@
+[
+  {
+    "titulo": "Introdução à Programação",
+    "descricao": "Curso básico de programação para iniciantes."
+  },
+  {
+    "titulo": "JavaScript para Web",
+    "descricao": "Aprenda JavaScript para desenvolver páginas interativas."
+  },
+  {
+    "titulo": "HTML e CSS Inicial",
+    "descricao": "Fundamentos de HTML e CSS para criação de sites simples."
+  }
+]
