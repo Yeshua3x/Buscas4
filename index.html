@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Sistema de Busca com JSON externo</title>
+  <title>Sistema de Busca (só no botão)</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,13 +42,9 @@
   <div id="results"></div>
 
   <script>
-    // URL do JSON externo (pode ser local ou remoto)
-    const URL_JSON = "./dados.json";
-
-    // Variável para armazenar os dados carregados
+    const URL_JSON = "./dados.json"; // ajuste o caminho se necessário
     let dados = [];
 
-    // Carrega o JSON externo
     fetch(URL_JSON)
       .then((response) => {
         if (!response.ok) throw new Error("Erro ao carregar JSON.");
@@ -63,15 +59,15 @@
           "<p>Erro ao carregar os dados.</p>";
       });
 
-    // Elementos do DOM
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
     const results = document.getElementById("results");
 
-    // Função de busca (case insensitive)
+    // Função de busca (só chama quando clicar no botão)
     function buscar(termos) {
+      results.innerHTML = ""; // limpa antes
+
       if (!termos || !dados.length) {
-        results.innerHTML = "";
         return;
       }
 
@@ -83,8 +79,6 @@
         return titulo.includes(termosMin) || descricao.includes(termosMin);
       });
 
-      // Monta a lista de resultados
-      results.innerHTML = "";
       if (resultadosFiltrados.length === 0) {
         results.innerHTML = "<p>Nenhum resultado encontrado.</p>";
       } else {
@@ -106,12 +100,10 @@
       }
     }
 
-    // Buscar ao digitar
-    searchInput.addEventListener("input", (e) => {
-      buscar(e.target.value.trim());
-    });
+    // REMOVER esta linha para NÃO buscar ao digitar
+    // searchInput.addEventListener("input", (e) => { buscar(e.target.value.trim()); });
 
-    // Buscar ao clicar no botão
+    // Buscar só ao clicar no botão
     searchButton.addEventListener("click", () => {
       buscar(searchInput.value.trim());
     });
